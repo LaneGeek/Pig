@@ -2,116 +2,110 @@ package sekha.h.pig;
 
 import java.util.Random;
 
-public class PigGame {
+class PigGame {
 
     private final int WINNING_SCORE = 20;
 
     private Random rand = new Random();
     private int player1Score;
     private int player2Score;
-    private int turnPoints;
     private String player1Name = "";
     private String player2Name = "";
     private int turn;
+    private int turnPoints;
 
-    public PigGame() {
+    PigGame() {
         player1Score = 0;
         player2Score = 0;
         turnPoints = 0;
         turn = 1; // player 1 goes first
     }
 
-    public PigGame(int p1Score, int p2Score, int tPoints, int t) {
-        player1Score = p1Score;
-        player2Score = p2Score;
-        turnPoints = tPoints;
-        turn = t;
-    }
-
-    public void setPlayer1Name(String n) {
-        player1Name = n;
-    }
-
-    public String getPlayer1Name() {
+    String getPlayer1Name() {
         return player1Name;
     }
 
-    public void setPlayer2Name(String n) {
-        player2Name = n;
+    void setPlayer1Name(String n) {
+        player1Name = n;
     }
 
-    public String getPlayer2Name() {
+    String getPlayer2Name() {
         return player2Name;
     }
 
-    public int getTurn() {
-        return turn;
+    void setPlayer2Name(String n) {
+        player2Name = n;
     }
 
-    public int getPlayer1Score() {
+    int getPlayer1Score() {
         return player1Score;
     }
 
-    public int getPlayer2Score() {
-        return player2Score;
-    }
-
-    public void setPlayer1Score(int score) {
+    void setPlayer1Score(int score) {
         player1Score = score;
     }
 
-    public void resetGame() {
+    int getPlayer2Score() {
+        return player2Score;
+    }
+
+    void setPlayer2Score(int score) {
+        player2Score = score;
+    }
+
+    int getTurn() {
+        return turn;
+    }
+
+    void setTurn(int t) {
+        turn = t;
+    }
+
+    int getTurnPoints() {
+        return turnPoints;
+    }
+
+    void setTurnPoints(int p) {
+        turnPoints = p;
+    }
+
+    void resetGame() {
         player1Score = 0;
         player2Score = 0;
         turnPoints = 0;
         turn = 1;
     }
 
-    public int rollDie() {
+    int rollDie() {
         int roll = rand.nextInt(6) + 1;
-
         if (roll != 1) {
             turnPoints += roll;
         } else {
             turnPoints = 0;
             changeTurn();
         }
-
         return roll;
     }
 
-    public int getTurnPoints() {
-        return turnPoints;
+    String getCurrentPlayer() {
+        return turn % 2 == 1 ? player1Name : player2Name;
     }
 
-    public String getCurrentPlayer() {
-        if (turn % 2 == 1)
-            return player1Name;
-        else
-            return player2Name;
-    }
-
-    public int changeTurn() {
+    void changeTurn() {
         if (turn % 2 == 1)
             player1Score += turnPoints;
         else
             player2Score += turnPoints;
-
         turnPoints = 0;
-
         turn++;
-        return turn;
     }
 
-    public String checkForWinner() {
+    String checkForWinner() {
         String winnerMessage = "";
         if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
             if (player2Score > player1Score) {
                 winnerMessage = String.format("%s wins!", player2Name);
-            }
-            // Player 1 can only win after player 2 has had thier turn
-            // This is so both players can have an equal number of turns
-            else if (player1Score > player2Score && turn % 2 == 1) {
+            } else if (player1Score > player2Score && turn % 2 == 1) {
                 winnerMessage = String.format("%s wins!", player1Name);
             } else if (player1Score == player2Score) {
                 winnerMessage = "Tie";
@@ -119,5 +113,4 @@ public class PigGame {
         }
         return winnerMessage;
     }
-
 }
