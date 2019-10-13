@@ -2,7 +2,6 @@ package sekha.h.pig;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private Button rollDieButton;
     private Button turnButton;
 
-    private SharedPreferences savedValues;
     private PigGame pigGame = new PigGame();
     private int die = 0;
 
@@ -41,24 +39,39 @@ public class MainActivity extends AppCompatActivity {
         rollDieButton = findViewById(R.id.rollDieButton);
         turnButton = findViewById(R.id.turnButton);
 
-        savedValues = getSharedPreferences("SavedValues", MODE_PRIVATE);
         updateScreen();
     }
 
     @Override
-    protected void onPause() {
-        SharedPreferences.Editor editor = savedValues.edit();
-        editor.putString("player1Name", pigGame.getPlayer1Name());
-        editor.putInt("player1Score", pigGame.getPlayer1Score());
-        editor.apply();
-        super.onPause();
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the current game state
+        savedInstanceState.putInt("player1Score", pigGame.getPlayer1Score());
+        savedInstanceState.putString("player1Name", pigGame.getPlayer1Name());
+        savedInstanceState.putInt("player2Score", pigGame.getPlayer2Score());
+        savedInstanceState.putString("player2Name", pigGame.getPlayer2Name());
+        savedInstanceState.putInt("turn", pigGame.getTurn());
+        savedInstanceState.putInt("turnPoints", pigGame.getTurnPoints());
+        savedInstanceState.putInt("die", die);
+        savedInstanceState.putBoolean("rollDieButtonEnabled", rollDieButton.isEnabled());
+        savedInstanceState.putBoolean("turnButtonEnabled", turnButton.isEnabled());
+        savedInstanceState.putString("turnButtonText", turnButton.getText().toString());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        pigGame.setPlayer1Name(savedValues.getString("player1Name", ""));
-        pigGame.setPlayer1Score(savedValues.getInt("player1Score", 0));
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Restore the game state
+        super.onRestoreInstanceState(savedInstanceState);
+        pigGame.setPlayer1Name(savedInstanceState.getString("player1Name"));
+        pigGame.setPlayer1Score(savedInstanceState.getInt("player1Score"));
+        pigGame.setPlayer2Name(savedInstanceState.getString("player2Name"));
+        pigGame.setPlayer2Score(savedInstanceState.getInt("player2Score"));
+        pigGame.setTurn(savedInstanceState.getInt("turnPoints"));
+        pigGame.setTurnPoints(savedInstanceState.getInt("turnPoints"));
+        die = savedInstanceState.getInt("die");
+        rollDieButton.setEnabled(savedInstanceState.getBoolean("rollDieButtonEnabled"));
+        turnButton.setEnabled(savedInstanceState.getBoolean("turnButtonEnabled"));
+        turnButton.setText(savedInstanceState.getString("turnButtonText"));
+        updateScreen();
     }
 
     public void rollDieClick(View view) {
@@ -75,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         if (turnButton.getText().toString().equals("Start Turn")) {
             turnButton.setText("End Turn");
             rollDieButton.setEnabled(true);
+            updateScreen();
         } else {
             turnButton.setText("Start Turn");
             rollDieButton.setEnabled(false);
