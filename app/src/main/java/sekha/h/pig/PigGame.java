@@ -7,35 +7,10 @@ class PigGame {
     private final int WINNING_SCORE = 20;
 
     private Random rand = new Random();
-    private int player1Score;
-    private int player2Score;
-    private String player1Name = "";
-    private String player2Name = "";
-    private int turn;
-    private int turnPoints;
-
-    PigGame() {
-        player1Score = 0;
-        player2Score = 0;
-        turnPoints = 0;
-        turn = 1; // player 1 goes first
-    }
-
-    String getPlayer1Name() {
-        return player1Name;
-    }
-
-    void setPlayer1Name(String n) {
-        player1Name = n;
-    }
-
-    String getPlayer2Name() {
-        return player2Name;
-    }
-
-    void setPlayer2Name(String n) {
-        player2Name = n;
-    }
+    private int player1Score = 0;
+    private int player2Score = 0;
+    private int turnPoints = 0;
+    private int currentPlayer = 1;
 
     int getPlayer1Score() {
         return player1Score;
@@ -53,27 +28,20 @@ class PigGame {
         player2Score = score;
     }
 
-    int getTurn() {
-        return turn;
-    }
-
-    void setTurn(int t) {
-        turn = t;
-    }
-
     int getTurnPoints() {
         return turnPoints;
     }
 
-    void setTurnPoints(int p) {
-        turnPoints = p;
+    void setTurnPoints(int points) {
+        turnPoints = points;
     }
 
-    void resetGame() {
-        player1Score = 0;
-        player2Score = 0;
-        turnPoints = 0;
-        turn = 1;
+    int getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    void setCurrentPlayer(int player) {
+        currentPlayer = player;
     }
 
     int rollDie() {
@@ -87,30 +55,28 @@ class PigGame {
         return roll;
     }
 
-    String getCurrentPlayer() {
-        return turn % 2 == 1 ? player1Name : player2Name;
-    }
-
     void changeTurn() {
-        if (turn % 2 == 1)
+        if (currentPlayer == 1) {
             player1Score += turnPoints;
-        else
+            currentPlayer = 2;
+        } else {
             player2Score += turnPoints;
+            currentPlayer = 1;
+        }
         turnPoints = 0;
-        turn++;
     }
 
-    String checkForWinner() {
-        String winnerMessage = "";
+    int checkForWinner() {
+        // returns the player number or 0 for a tie and -1 if no winner or tie
+        int winner = -1;
         if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
-            if (player2Score > player1Score) {
-                winnerMessage = String.format("%s wins!", player2Name);
-            } else if (player1Score > player2Score && turn % 2 == 1) {
-                winnerMessage = String.format("%s wins!", player1Name);
-            } else if (player1Score == player2Score) {
-                winnerMessage = "Tie";
-            }
+            if (player2Score > player1Score)
+                winner = 2;
+            if (player1Score > player2Score && currentPlayer == 1)
+                winner = 1;
+            if (player1Score == player2Score)
+                winner = 0;
         }
-        return winnerMessage;
+        return winner;
     }
 }

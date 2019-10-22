@@ -46,11 +46,9 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         // Save the current game state
         savedInstanceState.putInt("player1Score", pigGame.getPlayer1Score());
-        savedInstanceState.putString("player1Name", pigGame.getPlayer1Name());
         savedInstanceState.putInt("player2Score", pigGame.getPlayer2Score());
-        savedInstanceState.putString("player2Name", pigGame.getPlayer2Name());
-        savedInstanceState.putInt("turn", pigGame.getTurn());
         savedInstanceState.putInt("turnPoints", pigGame.getTurnPoints());
+        savedInstanceState.putInt("currentPlayer", pigGame.getCurrentPlayer());
         savedInstanceState.putInt("die", die);
         savedInstanceState.putBoolean("rollDieButtonEnabled", rollDieButton.isEnabled());
         savedInstanceState.putBoolean("turnButtonEnabled", turnButton.isEnabled());
@@ -58,15 +56,14 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the game state
         super.onRestoreInstanceState(savedInstanceState);
-        pigGame.setPlayer1Name(savedInstanceState.getString("player1Name"));
         pigGame.setPlayer1Score(savedInstanceState.getInt("player1Score"));
-        pigGame.setPlayer2Name(savedInstanceState.getString("player2Name"));
         pigGame.setPlayer2Score(savedInstanceState.getInt("player2Score"));
-        pigGame.setTurn(savedInstanceState.getInt("turnPoints"));
         pigGame.setTurnPoints(savedInstanceState.getInt("turnPoints"));
+        pigGame.setCurrentPlayer(savedInstanceState.getInt("currentPlayer"));
         die = savedInstanceState.getInt("die");
         rollDieButton.setEnabled(savedInstanceState.getBoolean("rollDieButtonEnabled"));
         turnButton.setEnabled(savedInstanceState.getBoolean("turnButtonEnabled"));
@@ -88,18 +85,17 @@ public class MainActivity extends AppCompatActivity {
         if (turnButton.getText().toString().equals("Start Turn")) {
             turnButton.setText("End Turn");
             rollDieButton.setEnabled(true);
-            updateScreen();
         } else {
             turnButton.setText("Start Turn");
             rollDieButton.setEnabled(false);
             pigGame.changeTurn();
             die = 0;
-            updateScreen();
         }
+        updateScreen();
     }
 
     public void newGameClick(View view) {
-        pigGame.resetGame();
+        pigGame = new PigGame();
         die = 0;
         rollDieButton.setEnabled(false);
         turnButton.setText("Start Turn");
@@ -108,16 +104,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateScreen() {
-        pigGame.setPlayer1Name(player1NameEditText.getText().toString());
-        pigGame.setPlayer2Name(player2NameEditText.getText().toString());
-        nextTurnTextView.setText(pigGame.getCurrentPlayer() + "'s Turn");
+        if (pigGame.getCurrentPlayer() == 1)
+            nextTurnTextView.setText(player1NameEditText.getText() + "'s Turn");
+        else
+            nextTurnTextView.setText(player2NameEditText.getText() + "'s Turn");
+
         player1ScoreTextView.setText(Integer.toString(pigGame.getPlayer1Score()));
         player2ScoreTextView.setText(Integer.toString(pigGame.getPlayer2Score()));
         turnPointsTextView.setText(Integer.toString(pigGame.getTurnPoints()));
 
         // Check for winner
-        if (!pigGame.checkForWinner().equals("")) {
-            nextTurnTextView.setText(pigGame.checkForWinner());
+        if (pigGame.checkForWinner() != -1) {
+            switch (pigGame.checkForWinner()) {
+                case 0:
+                    nextTurnTextView.setText("It is a tie!");
+                    break;
+                case 1:
+                    nextTurnTextView.setText(player1NameEditText.getText() + " Wins!");
+                    break;
+                case 2:
+                    nextTurnTextView.setText(player2NameEditText.getText() + " Wins!");
+                    break;
+            }
             rollDieButton.setEnabled(false);
             turnButton.setEnabled(false);
         }
