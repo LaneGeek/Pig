@@ -68,15 +68,14 @@ class PigGame {
 
     int checkForWinner() {
         // returns the player number or 0 for a tie and -1 if no winner or tie
-        int winner = -1;
         if (player1Score >= WINNING_SCORE || player2Score >= WINNING_SCORE) {
             if (player2Score > player1Score)
-                winner = 2;
+                return 2;
             if (player1Score > player2Score && currentPlayer == 1)
-                winner = 1;
+                return  1;
             if (player1Score == player2Score)
-                winner = 0;
+                return  0;
         }
-        return winner;
+        return -1;
     }
 }

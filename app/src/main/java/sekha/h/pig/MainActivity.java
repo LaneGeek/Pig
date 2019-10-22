@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         savedInstanceState.putBoolean("rollDieButtonEnabled", rollDieButton.isEnabled());
         savedInstanceState.putBoolean("turnButtonEnabled", turnButton.isEnabled());
         savedInstanceState.putString("turnButtonText", turnButton.getText().toString());
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore the game state
         super.onRestoreInstanceState(savedInstanceState);
+        
         pigGame.setPlayer1Score(savedInstanceState.getInt("player1Score"));
         pigGame.setPlayer2Score(savedInstanceState.getInt("player2Score"));
         pigGame.setTurnPoints(savedInstanceState.getInt("turnPoints"));
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         rollDieButton.setEnabled(savedInstanceState.getBoolean("rollDieButtonEnabled"));
         turnButton.setEnabled(savedInstanceState.getBoolean("turnButtonEnabled"));
         turnButton.setText(savedInstanceState.getString("turnButtonText"));
+
         updateScreen();
     }
 
